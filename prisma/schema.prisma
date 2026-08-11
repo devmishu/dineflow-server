@@ -13,11 +13,15 @@ datasource db {
 }
 
 enum UserRole {
-  ADMIN
   CUSTOMER
+  ADMIN
 }
 
-
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
 
 model User {
   id        String     @id @default(uuid())
@@ -25,18 +29,20 @@ model User {
   email     String     @unique
   password  String
   role      UserRole   @default(CUSTOMER)
+  status    UserStatus @default(ACTIVE)
   isDeleted Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   orders    Order[]
 
+  @@index([email])
+  @@index([status])
   @@map("users")
-}
-
-
+} 
 
 model Product {
-  id          String      @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
   price       Float
@@ -46,14 +52,11 @@ model Product {
   @@map("products")
 }
 
-
-
 model Order {
-  id          String      @id @default(uuid())
+  id          String @id @default(uuid())
   userId      String
   totalAmount Float
-  user        User        @relation(fields: [userId], references: [id])
+  user        User   @relation(fields: [userId], references: [id])
 
   @@map("orders")
 }
-

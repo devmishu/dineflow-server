@@ -4,33 +4,6 @@ import prisma from "../lib/prisma";
 // Initialize Express router for product-related routes
 const router = Router();
 
-/**
- * ============================================
- * PRODUCT ROUTES - Complete CRUD Operations
- * ============================================
- *
- * This router handles product-related operations:
- * - Creating new products
- * - Retrieving products
- * - Updating product information
- * - Deleting products
- */
-
-/**
- * ============================================
- * POST /products
- * Create a new product
- *
- * Expected Request Body:
- * {
- *   "title": "Laptop",
- *   "description": "High performance laptop",
- *   "price": 999.99,
- *   "stock": 50,
- *   "image": "https://example.com/laptop.jpg"
- * }
- * ============================================
- */
 
 router.post("/", async (req: Request, res: Response) => {
   try {
