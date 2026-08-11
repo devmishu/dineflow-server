@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  role      UserRole   @default(CUSTOMER)
+  isDeleted Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  orders    Order[]
+
+  @@map("users")
+}
+
+
+
+model Product {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  stock       Int
+  image       String?
+
+  @@map("products")
+}
+
+
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  totalAmount Float
+  user        User        @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
