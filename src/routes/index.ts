@@ -2,6 +2,7 @@ import { Router } from "express";
 import { loginUser, registerUser } from "../controller/controller";
 
 import products from "../services/products";
+import category from "../services/category";
 
 
 
@@ -18,7 +19,7 @@ router.post("/login", loginUser);
 
 
 
-
+router.use("/categories", category);
 router.use("/products", products);
 
 

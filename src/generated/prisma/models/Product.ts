@@ -487,10 +487,6 @@ export type ProductSumOrderByAggregateInput = {
   stock?: Prisma.SortOrder
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number

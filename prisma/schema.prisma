@@ -41,6 +41,22 @@ model User {
   @@map("users")
 }
 
+model Category {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+  image       String?
+
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([isDeleted])
+  @@map("categories")
+}
+
 enum ProductStatus {
   AVAILABLE
   OUT_OF_STOCK

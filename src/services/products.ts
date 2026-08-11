@@ -4,13 +4,12 @@ import { ProductStatus } from "../generated/prisma/client";
 
 const router = Router();
 
-/*
-============================================
-POST /api/products
-Create Product
-============================================
-*/
-
+/**
+ * ============================================
+ * POST /products
+ * Create a new product
+ * ============================================
+ */
 router.post("/", async (req: Request, res: Response) => {
   try {
     const {
@@ -32,7 +31,16 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    // Price validation
+    // Validate title
+    if (typeof title !== "string" || title.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Title must be a valid string",
+        data: null,
+      });
+    }
+
+    // Validate price
     if (typeof price !== "number" || price <= 0) {
       return res.status(400).json({
         success: false,
@@ -41,7 +49,7 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    // Stock validation
+    // Validate stock
     if (!Number.isInteger(stock) || stock < 0) {
       return res.status(400).json({
         success: false,
@@ -50,10 +58,10 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    // Status validation
+    // Validate status
     if (
       status !== undefined &&
-      !Object.values(ProductStatus).includes(status)
+      !Object.values(ProductStatus).includes(status as ProductStatus)
     ) {
       return res.status(400).json({
         success: false,
@@ -62,7 +70,7 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    // isAvailable validation
+    // Validate isAvailable
     if (
       isAvailable !== undefined &&
       typeof isAvailable !== "boolean"
@@ -77,13 +85,18 @@ router.post("/", async (req: Request, res: Response) => {
     // Create product
     const newProduct = await prisma.product.create({
       data: {
-        title,
-        description,
+        title: title.trim(),
+        description:
+          description !== undefined ? description : null,
         price,
         stock,
-        image,
-        status,
-        isAvailable,
+        image: image !== undefined ? image : null,
+        status:
+          status !== undefined
+            ? (status as ProductStatus)
+            : ProductStatus.AVAILABLE,
+        isAvailable:
+          isAvailable !== undefined ? isAvailable : true,
       },
     });
 
@@ -103,13 +116,12 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-/*
-============================================
-GET /api/products
-Get All Products
-============================================
-*/
-
+/**
+ * ============================================
+ * GET /products
+ * Get all active products
+ * ============================================
+ */
 router.get("/", async (_req: Request, res: Response) => {
   try {
     const products = await prisma.product.findMany({
@@ -137,16 +149,17 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 });
 
-/*
-============================================
-GET /api/products/:id
-Get Product By ID
-============================================
-*/
-
+/**
+ * ============================================
+ * GET /products/:id
+ * Get product by ID
+ * ============================================
+ */
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
 
     const product = await prisma.product.findFirst({
       where: {
@@ -179,16 +192,17 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-/*
-============================================
-PATCH /api/products/:id
-Update Product
-============================================
-*/
-
+/**
+ * ============================================
+ * PATCH /products/:id
+ * Update product
+ * ============================================
+ */
 router.patch("/:id", async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
 
     const {
       title,
@@ -216,7 +230,34 @@ router.patch("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    // Price validation
+    // Validate title
+    if (title !== undefined) {
+      if (
+        typeof title !== "string" ||
+        title.trim().length === 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Title must be a valid string",
+          data: null,
+        });
+      }
+    }
+
+    // Validate description
+    if (
+      description !== undefined &&
+      description !== null &&
+      typeof description !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Description must be a string",
+        data: null,
+      });
+    }
+
+    // Validate price
     if (price !== undefined) {
       if (typeof price !== "number" || price <= 0) {
         return res.status(400).json({
@@ -227,7 +268,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
       }
     }
 
-    // Stock validation
+    // Validate stock
     if (stock !== undefined) {
       if (!Number.isInteger(stock) || stock < 0) {
         return res.status(400).json({
@@ -238,10 +279,12 @@ router.patch("/:id", async (req: Request, res: Response) => {
       }
     }
 
-    // Status validation
+    // Validate status
     if (
       status !== undefined &&
-      !Object.values(ProductStatus).includes(status)
+      !Object.values(ProductStatus).includes(
+        status as ProductStatus
+      )
     ) {
       return res.status(400).json({
         success: false,
@@ -250,7 +293,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    // isAvailable validation
+    // Validate isAvailable
     if (
       isAvailable !== undefined &&
       typeof isAvailable !== "boolean"
@@ -268,13 +311,33 @@ router.patch("/:id", async (req: Request, res: Response) => {
         id,
       },
       data: {
-        ...(title !== undefined && { title }),
-        ...(description !== undefined && { description }),
-        ...(price !== undefined && { price }),
-        ...(stock !== undefined && { stock }),
-        ...(image !== undefined && { image }),
-        ...(status !== undefined && { status }),
-        ...(isAvailable !== undefined && { isAvailable }),
+        ...(title !== undefined && {
+          title: title.trim(),
+        }),
+
+        ...(description !== undefined && {
+          description,
+        }),
+
+        ...(price !== undefined && {
+          price,
+        }),
+
+        ...(stock !== undefined && {
+          stock,
+        }),
+
+        ...(image !== undefined && {
+          image,
+        }),
+
+        ...(status !== undefined && {
+          status: status as ProductStatus,
+        }),
+
+        ...(isAvailable !== undefined && {
+          isAvailable,
+        }),
       },
     });
 
@@ -294,16 +357,17 @@ router.patch("/:id", async (req: Request, res: Response) => {
   }
 });
 
-/*
-============================================
-DELETE /api/products/:id
-Soft Delete Product
-============================================
-*/
-
+/**
+ * ============================================
+ * DELETE /products/:id
+ * Soft delete product
+ * ============================================
+ */
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
 
     // Check existing product
     const existingProduct = await prisma.product.findFirst({
