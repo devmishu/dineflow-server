@@ -18,7 +18,6 @@ const getId = (id: string | string[]): string => {
 
 /**
  * ============================================
- * POST /api/categories
  * Create Category
  * ============================================
  */
@@ -84,7 +83,6 @@ router.post("/", async (req: Request, res: Response) => {
 
 /**
  * ============================================
- * GET /api/categories
  * Get All Categories
  * ============================================
  */
@@ -117,7 +115,6 @@ router.get("/", async (_req: Request, res: Response) => {
 
 /**
  * ============================================
- * GET /api/categories/:id
  * Get Category By ID
  * ============================================
  */
@@ -158,7 +155,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 /**
  * ============================================
- * PATCH /api/categories/:id
  * Update Category
  * ============================================
  */
@@ -261,8 +257,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
 
 /**
  * ============================================
- * DELETE /api/categories/:id
- * Soft Delete Category
+ * Delete Category
  * ============================================
  */
 router.delete("/:id", async (req: Request, res: Response) => {
@@ -285,7 +280,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    // Soft delete
+    
     const deletedCategory =
       await prisma.category.update({
         where: {

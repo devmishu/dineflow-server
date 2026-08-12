@@ -4,7 +4,6 @@ import prisma from "../lib/prisma";
 const router = Router();
 
 // ============================================
-// POST /reviews
 // Create Review
 // ============================================
 
@@ -111,7 +110,6 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // ============================================
-// GET /reviews
 // Get All Reviews
 // ============================================
 
@@ -160,7 +158,6 @@ router.get("/", async (_req: Request, res: Response) => {
 });
 
 // ============================================
-// GET /reviews/:id
 // Get Review By ID
 // ============================================
 
@@ -219,7 +216,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // ============================================
-// GET /reviews/product/:productId
 // Get Reviews By Product
 // ============================================
 

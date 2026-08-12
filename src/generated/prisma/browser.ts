@@ -42,3 +42,8 @@ export type Review = Prisma.ReviewModel
  * 
  */
 export type Order = Prisma.OrderModel
+/**
+ * Model OrderItem
+ * 
+ */
+export type OrderItem = Prisma.OrderItemModel

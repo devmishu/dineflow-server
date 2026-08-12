@@ -83,9 +83,10 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  reviews   Review[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  reviews    Review[]
+  orderItems OrderItem[]
 
   @@index([title])
   @@index([status])
@@ -120,11 +121,56 @@ model Review {
   @@map("reviews")
 }
 
-model Order {
-  id          String @id @default(uuid())
-  userId      String
-  totalAmount Float
-  user        User   @relation(fields: [userId], references: [id])
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  DELIVERED
+  CANCELLED
+}
 
+model Order {
+  id String @id @default(uuid())
+
+  userId String
+
+  totalAmount Float @default(0)
+
+  status OrderStatus @default(PENDING)
+
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([isDeleted])
+  @@index([createdAt])
   @@map("orders")
+}
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId   String
+  productId String
+
+  quantity Int
+  price    Float
+  subtotal Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
 }

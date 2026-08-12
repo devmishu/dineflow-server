@@ -11,7 +11,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "Server is running",
+    message: "Welcome Dineflow server ",
   });
 });
 

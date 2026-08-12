@@ -19,7 +19,6 @@ const getId = (id: string | string[]): string => {
 
 /**
  * ============================================
- * POST /api/products
  * Create Product
  * ============================================
  */
@@ -190,7 +189,6 @@ router.post("/", async (req: Request, res: Response) => {
 
 /**
  * ============================================
- * GET /api/products
  * Get All Products
  * ============================================
  */
@@ -228,7 +226,6 @@ router.get("/", async (_req: Request, res: Response) => {
 
 /**
  * ============================================
- * GET /api/products/:id
  * Get Product By ID
  * ============================================
  */
@@ -273,7 +270,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 /**
  * ============================================
- * PATCH /api/products/:id
  * Update Product
  * ============================================
  */
@@ -483,8 +479,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
 
 /**
  * ============================================
- * DELETE /api/products/:id
- * Soft Delete Product
+ * Delete Product
  * ============================================
  */
 router.delete("/:id", async (req: Request, res: Response) => {
@@ -507,7 +502,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    // Soft delete
+    
     const deletedProduct = await prisma.product.update({
       where: {
         id,
